@@ -31,6 +31,6 @@ app.use("/api/articles", articleRouter)
 const server = http.createServer(app)
 //startWebSocketServer(server)
 
-server.listen(8888, () => {
-  console.log("Server is running on port 8888");
+server.listen(process.env.PORT, () => {
+  console.log("Server is running on port " + process.env.PORT);
 });

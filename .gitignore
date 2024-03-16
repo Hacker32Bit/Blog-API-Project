@@ -3,3 +3,5 @@ dist
 test.txt
 package-lock.json
 .env
+localhost.crt
+localhost.key

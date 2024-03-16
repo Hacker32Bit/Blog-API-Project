@@ -6,6 +6,7 @@ import {
 } from "../validation/article.schema";
 import { authentucate } from "../middleware/authenticate";
 import multer from "multer";
+import { uploadFile } from "../lib/aws-s3";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ const fileFilter = (req: IRequest, file: any, cb: any) => {
 const upload = multer({
   storage,
   fileFilter,
-})
+});
 
 // create Article
 router.post("/", authentucate, async (req: IRequest, res: Response) => {
@@ -69,12 +70,20 @@ router.post(
   upload.single("image"),
   async (req: IRequest, res: Response) => {
     try {
-      console.log(req.file);
+      if (!req.file) {
+        return res.status(400).json({ message: "Please upload an image" });
+      }
 
-      res.status(201).json({ message: "Image is uploaded..."})
+      const result = await uploadFile(req.file);
+
+      res
+        .status(201)
+        .json({
+          imagePath: process.env.PROJECT_URL + "/uploads/" + req.file.filename,
+        });
     } catch (error) {
-      console.log("In error!")
-      res.status(400).send(error)
+      console.log("In error!");
+      res.status(400).send(error);
     }
   }
 );
